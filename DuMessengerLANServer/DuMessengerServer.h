@@ -12,6 +12,7 @@ class DuMessengerServer : public QTcpServer
 public:
     DuMessengerServer(QObject *parent = nullptr);
     bool startServer(quint16 port);
+    int personasConectadas;
 protected:
     void incomingConnection(qintptr handle);
 private:

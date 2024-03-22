@@ -9,13 +9,16 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    dumessengerconnectiondialog.cpp \
     main.cpp \
     widget.cpp
 
 HEADERS += \
+    dumessengerconnectiondialog.h \
     widget.h
 
 FORMS += \
+    dumessengerconnectiondialog.ui \
     widget.ui
 
 QMAKE_CXXFLAGS += -std=gnu++11
@@ -24,3 +27,6 @@ QMAKE_CXXFLAGS += -std=gnu++11
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    logo.qrc

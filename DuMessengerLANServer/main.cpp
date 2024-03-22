@@ -8,7 +8,7 @@ using namespace jdiscua;
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    qDebug() << "al menos corre xd";
+    qDebug() << "al menos corre";
     DuMessengerServer Server;
     if (!Server.startServer(3333)) {
         qDebug() << "Error: " << Server.errorString();

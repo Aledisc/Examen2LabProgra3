@@ -2,6 +2,7 @@
 #include "DuMessengerSocket.h"
 #include "QTextStream"
 #include <QDebug>
+#include "QFile"
 
 namespace jdiscua
 {
@@ -12,6 +13,8 @@ DuMessengerServer::DuMessengerServer(QObject *parent)
 
 bool DuMessengerServer::startServer(quint16 port)
 {
+    qDebug() << "prendiendo server";
+    personasConectadas=0;
     return listen(QHostAddress::Any, port);
 }
 
@@ -20,6 +23,23 @@ void DuMessengerServer::incomingConnection(qintptr handle)
     qDebug() << "Se conecto el cliente con el handle: " << handle;
     auto socket = new DuMessengerSocket(handle, this);
     mSockets << socket;
+    personasConectadas++;
+
+    QFile personasArchivo("C:/Users/Admin/Desktop/archivosWhatsapp/personasConectadas.txt");
+    if (!personasArchivo.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug() << "Error al abrir el archivo de personas.";
+        //return;
+    }
+    QTextStream stream(&personasArchivo);
+    stream << personasConectadas;
+    personasArchivo.close();
+
+    for (auto i : mSockets){
+        QTextStream T(i);
+        T << "Server: Se ha conectado: " << handle;
+        i->flush();
+    }
 
     connect(socket, &DuMessengerSocket::DuReadyRead, [&](DuMessengerSocket *S)
     {
@@ -42,11 +62,22 @@ void DuMessengerServer::incomingConnection(qintptr handle)
             mSockets.removeOne(S);
             for(auto i : mSockets){
                 QTextStream K(i);
-                K << "Server: El cliente "
-                  << S->socketDescriptor()
+                K << "Server: Un cliente "
+                  //<< S->socketDescriptor()
                   << "se ha desconectado...";
+                personasConectadas--;
                 i->flush();
             }
+            QFile personasArchivo("C:/Users/Admin/Desktop/archivosWhatsapp/personasConectadas.txt");
+            if (!personasArchivo.open(QIODevice::WriteOnly | QIODevice::Text))
+            {
+                qDebug() << "Error al abrir el archivo de personas.";
+                //return;
+            }
+            QTextStream stream(&personasArchivo);
+            stream << personasConectadas;
+            personasArchivo.close();
+
         }
     });
 }
